@@ -1,0 +1,139 @@
+-- Web Study --
+
+정적페이지 : 서버에 저장되어 있는 html, css, javascript, image 파일등을 그대로 보여주는 것 
+                 port : 80 ,  Apache Server,  **Nginx  
+
+동적페이지 : 상황에 따라 서버에 저장되어있는 데이터를 추가/가공을 해서 보여주는 방식
+                 port : 8080(오라클과 충돌)  **Tomcat, JBoss
+
+WebServer 와  Web Applicaiton Server (WAS) 
+- WebServer :  
+  * 웹 브라우저 클라이언트로부터 HTTP 요청을 받아 정적인 컨텐츠(.html .jpeg .css 등)를 제공하는 컴퓨터 프로그램
+  * HTTP 프로토콜을 기반으로 하여 클라이언트(웹 브라우저 또는 웹 크롤러)의 요청을 서비스 하는 기능을 담당
+  * 정적인 컨텐츠 제공
+  * WAS를 거치지 않고 바로 자원을 제공한다.
+  * 동적인 컨테츠 제공을 위한 WAS(Web Container)에게 요청 전달
+    WAS(Web Container)에게 처리결과를 받아서 클라이언트에게 응답
+
+- WAS(Web Applicaiton Server) 
+  * WAS = WebServer + Web Container
+  * DB 조회나 다양한 로직 처리를 요구하는 동적인 컨테츠를 제공하기 위해 만들어진 Application Server
+
+======================================================
+1. WAS 인 tomcat 을 다운받자.
+   https://tomcat.apache.org/download-10.cgi
+2. 다운받은 파일을 C 드라이브에 놓고 압축 풀자 
+3. 압축 푼 구조를 보면 
+   bin - 명령어가 있는 폴더 
+   conf - 환경설정 파일이 있는 폴더 
+   webapps - 실제 web 서비스를 하기 위한 폴더 
+4. conf - server.xml 파일을 열어서 환경 설정하자.
+   4-1. 포트가 8080 이므로 오라클과 충돌 발생 => 포트 수정
+   4-2. 한글 처리를 해줘야 한다.
+     <Connector  URIEncoding="UTF-8"  port="8090" protocol="HTTP/1.1"
+               connectionTimeout="20000"
+               redirectPort="8443"
+               maxParameterCount="1000"
+               />
+5. 톰켓을 실행 하기 위해서 
+   bin 폴더로 이동 - startup.bat(시작),  shutdown.bat(종료)
+  만약에 실행 되지 않으면 환경 설정에 JAVA_HOME를 수정하자.
+   C:\openjdk17\jdk-17.0.2\bin = > C:\openjdk17\jdk-17.0.2
+   Path 도 수정하자. 
+   %JAVA_HOME%  => %JAVA_HOME%\bin
+
+cmd 에서 확인 
+C:\Users\ICT>javac -version
+javac 17.0.2
+
+C:\Users\ICT>java -version
+openjdk version "17.0.2" 2022-01-18
+OpenJDK Runtime Environment (build 17.0.2+8-86)
+OpenJDK 64-Bit Server VM (build 17.0.2+8-86, mixed mode, sharing)
+
+startup.bat(시작) 후 확인 방법은 브라우저에서 localhost:8090 입력해서 
+화면이 나오면 된다.
+
+webapps 폴더에 들어가서 내용를 추가 하고 확인해보자 
+webapps 폴더안에 test01 폴더 만들고 그 안에 들어가서 
+ex01.txt 파일과 그림파일 하나를 넣어두자 
+
+다시 bin - startup.bat 실행 후 브라우저를 새로고침 하자.
+http://localhost:8090/test01(폴더이름)/ex01.txt(파일이름)
+
+html 파일을 하나를 메모장에 만들어서 확인 하자
+html, css, javascript,... 웹 관련 공부 사이트 : https://www.w3schools.com/
+test01 폴더안에 ex02.html를 만들고 
+내용은 
+<!DOCTYPE html>
+<html>
+<head>
+<title>Page Title</title>
+</head>
+<body>
+
+<h1>This is a Heading</h1>
+<p>This is a paragraph.</p>
+안녕            하세요
+반갑습니다.
+Hello Web Server
+123123
+</body>
+</html>
+를  입력하고 저장한 후 http://localhost:8090/test01(폴더이름)/ex02.html(파일이름)
+를  웹 브라우저에 입력하면 웹 페이지를 볼수 있다.
+
+웹 브라우저란 웹 페이지를 둘러볼 수 있게 해주는 프로그램
+웹 페이지 안에는 html, css, javascript 가 존재한다.
+
+================================================
+좀 더 편하게 사용하기 위해서 이클리스를 사용하자 
+(webstudy 폴더를 만들고 여기로 workspace를 지정하자)
+
+이클리스에서 web 페이지를 사용하기 위해서 기본 환경 설정을 하자.
+1. window - preferences - general - appearance - colors and fonts  클릭
+   오른쪽에  Basic - Text Font 더블클릭 후 글자 크기 20
+2. Workspace 선택 - Text file encoding - Other utf-8 인지 확인
+3. Web - CSS Files 선택 - Encoding : utf-8 선택 
+            HTML Files 선택 - Encoding : utf-8 선택 
+            JSP Files 선택 - Encoding : utf-8 선택 
+4. 가상 tomcat 서버 설정 하기 
+   Server - Runtime Environment 선택
+   Add - Apache - tomcat v10.1 선택 
+   Browse를 눌러서  C  드라이브에 있는 tomcat10 폴더 선택
+
+===========================================
+프로젝트 만드는 방법
+1. Dynamic Web Project 선택 
+2. 구조 - javaResources - src/main/java  => 자바를 코딩하는 공간
+           src -main-webapp => web 페이지 만드는 공간(html, css, js, jsp...)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
